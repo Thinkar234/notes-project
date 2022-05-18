@@ -1,30 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Notes.css";
 import { Note } from "../Note/Note";
+import { NewNote } from "../NewNote/NewNote";
+import axios from "../../axios";
 
 export const Notes = () => {
-  const notes = [
-    {
-      title: "Wykąpać psa",
-      body: "pamiętaj aby wykąpać specjalnym szamponem",
-      id: 234,
-    },
-    {
-      title: "Zrobić zakupy",
-      body: "kawa, whisky, piwo, mleko",
-      id: 11,
-    },
-    {
-      title: "Zagrać w grę",
-      body: "np. w Tomb Raider",
-      id: 11,
-    },
-  ];
+  const [task, setTask] = useState([]);
+
+  const deleteNote = async (id) => {
+    console.log("Usuwanie notatki", id);
+    await axios.delete("/notes/" + id);
+    fetchNotes();
+  };
+
+  const addNote = async (note) => {
+    const res = await axios.post("/notes", note);
+    console.log(res.data);
+    fetchNotes();
+  };
+
+  const fetchNotes = async () => {
+    const res = await axios.get("/notes");
+    const data = res.data;
+    setTask(data);
+  };
+
   return (
     <div>
       <p>Moje notatki:</p>
-      {notes.map((note) => {
-        return <Note title={note.title} body={note.body} id={note.id} />;
+      <button onClick={fetchNotes}>Pobierz notatki</button>
+      <NewNote onAdd={addNote} />
+      {task.map((note) => {
+        return (
+          <Note
+            key={note._id}
+            id={note._id}
+            title={note.title}
+            body={note.body}
+            onDelete={(id) => deleteNote(id)}
+          />
+        );
       })}
     </div>
   );
