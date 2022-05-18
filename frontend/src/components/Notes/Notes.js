@@ -13,15 +13,13 @@ export const Notes = () => {
   const [task, setTask] = useState([]);
 
   const deleteNote = async (id) => {
-    console.log("Usuwanie notatki", id);
     await axios.delete("/notes/" + id);
     fetchNotes();
   };
 
   const addNote = async (note) => {
     try {
-      const res = await axios.post("/notes", note);
-      console.log(res.data);
+      await axios.post("/notes", note);
       fetchNotes();
     } catch (err) {
       NotificationManager.error(err.response.data.message);
