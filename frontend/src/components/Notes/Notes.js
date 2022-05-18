@@ -3,6 +3,11 @@ import "./Notes.css";
 import { Note } from "../Note/Note";
 import { NewNote } from "../NewNote/NewNote";
 import axios from "../../axios";
+import {
+  NotificationContainer,
+  NotificationManager,
+} from "react-notifications";
+import "react-notifications/lib/notifications.css";
 
 export const Notes = () => {
   const [task, setTask] = useState([]);
@@ -14,9 +19,13 @@ export const Notes = () => {
   };
 
   const addNote = async (note) => {
-    const res = await axios.post("/notes", note);
-    console.log(res.data);
-    fetchNotes();
+    try {
+      const res = await axios.post("/notes", note);
+      console.log(res.data);
+      fetchNotes();
+    } catch (err) {
+      NotificationManager.error(err.response.data.message);
+    }
   };
 
   const fetchNotes = async () => {
@@ -27,6 +36,7 @@ export const Notes = () => {
 
   return (
     <div>
+      <NotificationContainer />
       <p>Moje notatki:</p>
       <button onClick={fetchNotes}>Pobierz notatki</button>
       <NewNote onAdd={addNote} />
