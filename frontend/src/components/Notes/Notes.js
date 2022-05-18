@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Notes.css";
 import { Note } from "../Note/Note";
 import { NewNote } from "../NewNote/NewNote";
@@ -33,12 +33,14 @@ export const Notes = () => {
     const data = res.data;
     setTask(data);
   };
+  useEffect(() => {
+    fetchNotes();
+  }, []);
 
   return (
     <div>
       <NotificationContainer />
       <p>Moje notatki:</p>
-      <button onClick={fetchNotes}>Pobierz notatki</button>
       <NewNote onAdd={addNote} />
       {task.map((note) => {
         return (
